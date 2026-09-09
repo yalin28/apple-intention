@@ -25,7 +25,7 @@
 克隆仓库后，联网直接打开根目录的 `index.html` 即可。也可以用任意静态服务器，例如：
 
 ```bash
-git clone git@github.com:yalin28/apple-intention.git
+git clone https://github.com/yalin28/apple-intention.git
 cd apple-intention
 python3 -m http.server 8000
 ```
@@ -124,6 +124,8 @@ https://github.com/yalin28/apple-intention
 [`pages.yml`](.github/workflows/pages.yml) 使用 GitHub 官方 Pages Actions：在 `main` 上修改 `index.html` 或发布工作流时自动触发，也支持从 Actions 页面手动运行。
 
 本项目不需要编译；工作流将 `index.html` 和 `.nojekyll` 打包到 `_site/` 后发布。参考视频、参考图和文档只存放在仓库里，不进入 Pages 发布包。部署进度和结果可在 [Actions](https://github.com/yalin28/apple-intention/actions/workflows/pages.yml) 查看。
+
+首次发布已成功：[部署记录](https://github.com/yalin28/apple-intention/actions/runs/34296794345)，发布源提交为 `e906462`。已通过 HTTP 确认线上页面返回 200，且 HTML 与本地文件逐字节一致。该上线检查不包含浏览器交互和帧率实测。
 
 ## 参考与致谢
 

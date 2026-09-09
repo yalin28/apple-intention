@@ -343,8 +343,10 @@ ScrollTrigger 的起点以舞台顶部到达视口顶部为准，终点为起点
 - 归档 24 张视频关键帧 + 12 张视频联系表 + 8 张实现关键帧 + 2 张最终实现联系表，共 46 张图片。视频及图片约 14.55 MiB。
 - 见 [参考素材说明](../reference/README.md)、[实现预览说明](previews/README.md) 与 [素材清单](asset-manifest.json)。清单保留文件大小、时间码、实际尺寸与 SHA-256。
 - 网页业务代码未因归档修改。所有非运行资料仅存于仓库，Pages 通过 `.github/workflows/pages.yml` 只打包根目录 HTML 与 `.nojekyll`。
-- 计划发布地址：[GitHub Pages](https://yalin28.github.io/apple-intention/)。具体部署状态以该仓库 Actions 和 Pages 返回结果为准。
-- 本地文件夹已与远端统一为 `apple-intention`；文档已改用仓库相对路径，方便重新克隆后继续任务。
+- 发布地址：[GitHub Pages](https://yalin28.github.io/apple-intention/)。首次 [Actions 发布](https://github.com/yalin28/apple-intention/actions/runs/34296794345) 已成功，源提交 `e906462`；HTTP 200 且线上 HTML 与本地逐字节一致。HTML SHA-256：`a395d24993f15daa967b2f713c958366caf49f038e3c4546066940ce123b93a8`。
+- 本地文件夹已与远端统一为 `apple-intention`；文档已改用仓库相对路径，方便重新克隆后继续任务。Git 远端为 `git@github.com:yalin28/apple-intention.git`，本地 `main` 跟踪 `origin/main`。
+- 归档验证：47 个媒体文件（46 张图片及视频）的大小与 SHA-256 全部匹配清单；文档本地链接、工作流 YAML、发布权限和仅 HTML 打包规则均检查通过。
+- Pages 已启用 GitHub Actions 发布。以上上线检查仅为 Actions / HTTP 层面；浏览器交互与性能未测试状态保持不变。
 
 ### 每次中断前必须更新
 
