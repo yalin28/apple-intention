@@ -1,0 +1,466 @@
+{
+  "description": "Selected video references and native renderer previews. Previews do not prove browser interaction or performance.",
+  "source_video": "reference/video/designed-by-apple-intention-1080p.mp4",
+  "frame_time_unit": "seconds; filenames use zero-padded seconds with millisecond precision",
+  "image_selection": {
+    "video_keyframes": 24,
+    "video_contact_sheets": 12,
+    "native_preview_keyframes": 8,
+    "native_preview_contact_sheets": 2
+  },
+  "assets": [
+    {
+      "path": "reference/frames/005.000s-square.jpg",
+      "kind": "video-frame",
+      "bytes": 68241,
+      "sha256": "2219bf30277bbd6ca4da0c2236a8abbfb11651d914e72962e957bb24eec9e82a",
+      "source_time_seconds": 5,
+      "description": "square",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "docs/previews/frames/005.000s-square.png",
+      "kind": "native-render-preview",
+      "bytes": 101267,
+      "sha256": "68c23e57be2f6a6594d288ccd3dff49658db89d6272f57132a82116c5aec0b33",
+      "source_time_seconds": 5,
+      "description": "square",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/009.000s-layered-geometry.jpg",
+      "kind": "video-frame",
+      "bytes": 137496,
+      "sha256": "9206aaddd8cbf15941289e601a81aa9db0aef9065eb2c04941060c9e2502dd78",
+      "source_time_seconds": 9,
+      "description": "layered-geometry",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/014.000s-perfect-anything.jpg",
+      "kind": "video-frame",
+      "bytes": 110151,
+      "sha256": "38988f7509e61523727fba30b4534560bfb5f62adcfeb41089035fc8c76ecef7",
+      "source_time_seconds": 14,
+      "description": "perfect-anything",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/018.000s-convenience.jpg",
+      "kind": "video-frame",
+      "bytes": 17649,
+      "sha256": "216146fe4674ea0c3779e00d11a91b1a015276b79e0062051414f4a43be2c171",
+      "source_time_seconds": 18,
+      "description": "convenience",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "reference/frames/024.000s-abundance.jpg",
+      "kind": "video-frame",
+      "bytes": 19553,
+      "sha256": "338404635c3e2f720b8dc291cebc4b8a9e530a9c9c4716383f4792be733c15a5",
+      "source_time_seconds": 24,
+      "description": "abundance",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "docs/previews/frames/024.000s-abundance.png",
+      "kind": "native-render-preview",
+      "bytes": 98631,
+      "sha256": "05dc259a5d2a93273ede5d88d4a05bd7b24823144b2e9cc32e584b8018e761b4",
+      "source_time_seconds": 24,
+      "description": "abundance",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/026.750s-diagonal-wipe.jpg",
+      "kind": "video-frame",
+      "bytes": 80621,
+      "sha256": "4f7b62b18e9df46211dcdc18645f6d4a95b1192ff769b163d3404e307921247f",
+      "source_time_seconds": 26.75,
+      "description": "diagonal-wipe",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/031.000s-focus.jpg",
+      "kind": "video-frame",
+      "bytes": 13109,
+      "sha256": "03d3f1dd7319289c84972b8d2f2d1e7c69ea23f2cb73606c8264edb625519ad4",
+      "source_time_seconds": 31,
+      "description": "focus",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "reference/frames/038.750s-feel-question.jpg",
+      "kind": "video-frame",
+      "bytes": 51174,
+      "sha256": "f80628bca0c0cb80e90d1063074d12c422b7ffcf3fe31dfa78106d6b4335ffc7",
+      "source_time_seconds": 38.75,
+      "description": "feel-question",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/039.000s-particle-burst.jpg",
+      "kind": "video-frame",
+      "bytes": 87977,
+      "sha256": "395ce7aab53387105c5c3efb1b28fcb7766e24bc0f4826f0b322e4cfb34b6c54",
+      "source_time_seconds": 39,
+      "description": "particle-burst",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "docs/previews/frames/039.000s-particle-burst.png",
+      "kind": "native-render-preview",
+      "bytes": 72479,
+      "sha256": "862eaa549f08e7e1ea1c2beab0e0722439580a8a56c2eaa2fc9daf7cffe8d5c3",
+      "source_time_seconds": 39,
+      "description": "particle-burst",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/041.500s-surprise.jpg",
+      "kind": "video-frame",
+      "bytes": 116330,
+      "sha256": "823520b7b5190abef06887b2b0e921f90edc29638ea3de016c8cf50a166dbab1",
+      "source_time_seconds": 41.5,
+      "description": "surprise",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/043.500s-love.jpg",
+      "kind": "video-frame",
+      "bytes": 83640,
+      "sha256": "b4ac86c0487f6af430e3cd71cc761fb7c001fe83aad832f3551ad19626462f4f",
+      "source_time_seconds": 43.5,
+      "description": "love",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "docs/previews/frames/043.500s-love.png",
+      "kind": "native-render-preview",
+      "bytes": 70713,
+      "sha256": "c8b9689c8e5f6d281f299b5967e3b0620d2db8cc6580b0bc69c96c482aaf78d3",
+      "source_time_seconds": 43.5,
+      "description": "love",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/045.000s-connection.jpg",
+      "kind": "video-frame",
+      "bytes": 83993,
+      "sha256": "b0bd6a8120110ec3ce6b0c37d71323f8c1afefd485f71fdeec792a096c797578",
+      "source_time_seconds": 45,
+      "description": "connection",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/049.000s-intention.jpg",
+      "kind": "video-frame",
+      "bytes": 24530,
+      "sha256": "2bed98ab4cacdc4cfb9d528a3e419dbefe66564bd68f2bbeeb256e8a27b7b27c",
+      "source_time_seconds": 49,
+      "description": "intention",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "reference/frames/059.000s-thousand-nos.jpg",
+      "kind": "video-frame",
+      "bytes": 30180,
+      "sha256": "706080b8a254fd6645c0764ae0e1a4e50c2c94935cd89dbdfd0fa2f32c641645",
+      "source_time_seconds": 59,
+      "description": "thousand-nos",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "reference/frames/063.000s-radial-network.jpg",
+      "kind": "video-frame",
+      "bytes": 169571,
+      "sha256": "5587f4a0722921c1f275cd6db1ff6129dd3d0c20098e87e20d4c7f5249886f93",
+      "source_time_seconds": 63,
+      "description": "radial-network",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "docs/previews/frames/063.000s-radial-network.png",
+      "kind": "native-render-preview",
+      "bytes": 538395,
+      "sha256": "a8e39208a6adf3cd48845cf61d28c53ed589ffc57a35dc5b485fb978c9f5e21a",
+      "source_time_seconds": 63,
+      "description": "radial-network",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/066.000s-one-yes.jpg",
+      "kind": "video-frame",
+      "bytes": 119351,
+      "sha256": "a8ad5b6e9739408f53fe6ba44a90e40a661c5b11eb739d02e63f12af345d1dad",
+      "source_time_seconds": 66,
+      "description": "one-yes",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/068.000s-simplify.jpg",
+      "kind": "video-frame",
+      "bytes": 20742,
+      "sha256": "6ddeae75f7f80e4ee3906be4c82bd6491c993cdb225444ae997db26c8c368e41",
+      "source_time_seconds": 68,
+      "description": "simplify",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "reference/frames/069.500s-perfect.jpg",
+      "kind": "video-frame",
+      "bytes": 128300,
+      "sha256": "f172b8d4161ceb39d2e1cfcb9714f9a207ad408eace97ea0f089f57a9932088e",
+      "source_time_seconds": 69.5,
+      "description": "perfect",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/071.000s-start-over.jpg",
+      "kind": "video-frame",
+      "bytes": 49636,
+      "sha256": "006fcef5dfb8283cdc184aa5c26296dcb2f4b0b462035228d94440ad71220c29",
+      "source_time_seconds": 71,
+      "description": "start-over",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "docs/previews/frames/071.000s-start-over.png",
+      "kind": "native-render-preview",
+      "bytes": 27688,
+      "sha256": "27697260e6411849b8121b71f56d865cf4b2263f14470df673f4d43f7359cbac",
+      "source_time_seconds": 71,
+      "description": "start-over",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/078.000s-enhances-life.jpg",
+      "kind": "video-frame",
+      "bytes": 104772,
+      "sha256": "dd8357a2607da4ca730982ba9e9edd341def376f9e9084f73b7f74a784d11132",
+      "source_time_seconds": 78,
+      "description": "enhances-life",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "docs/previews/frames/078.000s-enhances-life.png",
+      "kind": "native-render-preview",
+      "bytes": 52661,
+      "sha256": "6cb32923e9e5eb417dfcd40eb9b2038c94f7d4a78b36b794f816178741fc32a2",
+      "source_time_seconds": 78,
+      "description": "enhances-life",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/080.000s-second-pulse.jpg",
+      "kind": "video-frame",
+      "bytes": 41814,
+      "sha256": "c73580a7bc69077f3558a1fe9afa37fff2d1fbc767feb2aabe334bb42eac91c1",
+      "source_time_seconds": 80,
+      "description": "second-pulse",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/082.000s-white-wipe.jpg",
+      "kind": "video-frame",
+      "bytes": 75509,
+      "sha256": "5b81a17ea198e8f6366c3c390ea3df52780fba9c4f2a220106be3992c27ce006",
+      "source_time_seconds": 82,
+      "description": "white-wipe",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/frames/085.000s-sign-work.jpg",
+      "kind": "video-frame",
+      "bytes": 20965,
+      "sha256": "055ce6b5291cffd94d580be71d9781231c0483100fc15f3f8512dcc056574833",
+      "source_time_seconds": 85,
+      "description": "sign-work",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "reference/frames/089.000s-signature.jpg",
+      "kind": "video-frame",
+      "bytes": 24644,
+      "sha256": "b0e84974eab247b2d56ce71046561da6914222e9f6369db55d200e03c8911040",
+      "source_time_seconds": 89,
+      "description": "signature",
+      "width": 640,
+      "height": 360
+    },
+    {
+      "path": "docs/previews/frames/089.000s-signature.png",
+      "kind": "native-render-preview",
+      "bytes": 78970,
+      "sha256": "0845a5156eb7edc4baf8b0453549f682bfdff39229a54697bc0786e7fff4ca3f",
+      "source_time_seconds": 89,
+      "description": "signature",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "reference/contact-sheets/overview-000s-023s.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 69929,
+      "sha256": "d48cb06720afa934d8ebdc7d5c8fc2eb741ae377d3ee7e293dbc337b334d6c21",
+      "description": "Every second from 0 to 23; tiles show source seconds.",
+      "width": 1280,
+      "height": 1224
+    },
+    {
+      "path": "reference/contact-sheets/overview-024s-047s.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 62103,
+      "sha256": "722e78404ebdea4c24cf9f0f1479bfb103bba3198f7c43152411be0f205ece31",
+      "description": "Every second from 24 to 47; tiles show source seconds.",
+      "width": 1280,
+      "height": 1224
+    },
+    {
+      "path": "reference/contact-sheets/overview-048s-071s.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 70294,
+      "sha256": "6775feb01abd404cf3c310be2341f5421f3ca5a3be4c4b41c29e421576b44ee6",
+      "description": "Every second from 48 to 71; tiles show source seconds.",
+      "width": 1280,
+      "height": 1224
+    },
+    {
+      "path": "reference/contact-sheets/overview-072s-090s.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 52243,
+      "sha256": "84d7df0584843e9c18d6e7c89dc6fd10810b2675588a41902b6566e6707b2806",
+      "description": "Every second from 72 to 90; tiles show source seconds.",
+      "width": 1280,
+      "height": 1224
+    },
+    {
+      "path": "reference/contact-sheets/detail-003.000s-015.000s-geometry.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 92942,
+      "sha256": "445ab7cfe3b514920a7cb11bdb5c340080945ced5e9098cb04e8300790b78500",
+      "description": "High-resolution source extraction, 3–15s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 1428
+    },
+    {
+      "path": "reference/contact-sheets/detail-025.500s-027.500s-diagonal-wipe.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 31445,
+      "sha256": "c379536e63c91fb9887ced41c6ce1aff730555728285c03fd27d93c7786d1b62",
+      "description": "High-resolution source extraction, 25.5–27.5s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 612
+    },
+    {
+      "path": "reference/contact-sheets/detail-038.500s-041.750s-feel-burst.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 44663,
+      "sha256": "4258811c12325fdf5bea07db04739332f43610f11df46effe0ba8a018d5d3895",
+      "description": "High-resolution source extraction, 38.5–41.75s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 816
+    },
+    {
+      "path": "reference/contact-sheets/detail-043.000s-047.500s-connection.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 40297,
+      "sha256": "a46a83df0c35b2abd8ca0c2ffafa105f11c0d625ba0a21b36762092faaba8a05",
+      "description": "High-resolution source extraction, 43–47.5s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 1020
+    },
+    {
+      "path": "reference/contact-sheets/detail-050.000s-053.500s-intention.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 31388,
+      "sha256": "ebdef3e64e9e9822885271a35466e47f2314181b6d07c33db64cabf75cd0514a",
+      "description": "High-resolution source extraction, 50–53.5s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 816
+    },
+    {
+      "path": "reference/contact-sheets/detail-060.000s-067.000s-convergence.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 59370,
+      "sha256": "2347032666836db648dc341f081476a01b905e79b2a3ace9f751338541fc97d1",
+      "description": "High-resolution source extraction, 60–67s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 816
+    },
+    {
+      "path": "reference/contact-sheets/detail-068.500s-071.500s-black-circle.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 35233,
+      "sha256": "d6c313a19929fe974415bea75213a0a45a7e78447d92c4b039a6a73f035c2b24",
+      "description": "High-resolution source extraction, 68.5–71.5s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 816
+    },
+    {
+      "path": "reference/contact-sheets/detail-075.500s-082.500s-white-circles.jpg",
+      "kind": "video-contact-sheet",
+      "bytes": 45832,
+      "sha256": "e3021c80f4667d96cdd359e277fe014246cd324a3934776d797f3e6a23d2366d",
+      "description": "High-resolution source extraction, 75.5–82.5s; tile intervals 0.25–0.5s.",
+      "width": 1280,
+      "height": 816
+    },
+    {
+      "path": "docs/previews/contact-sheets/render-overview-01.jpg",
+      "kind": "native-render-contact-sheet",
+      "bytes": 62716,
+      "sha256": "bbbe55966d9389edc6fc6d0f3fa9082038c62a360fb79fc82bc05b23efd6ee2a",
+      "description": "Final native renderer previews. Not browser screenshots.",
+      "width": 1280,
+      "height": 624
+    },
+    {
+      "path": "docs/previews/contact-sheets/render-overview-02.jpg",
+      "kind": "native-render-contact-sheet",
+      "bytes": 60183,
+      "sha256": "b2d054ca9245bbcdb67e89bd8e237aa066ca7e664e8e68f02d76271bdcb234c4",
+      "description": "Final native renderer previews. Not browser screenshots.",
+      "width": 1280,
+      "height": 624
+    },
+    {
+      "path": "reference/video/designed-by-apple-intention-1080p.mp4",
+      "kind": "source-video",
+      "bytes": 11782627,
+      "sha256": "a72dab2801d06c518e9d839af94b7d56e02f9da156c0558ef0ac972cdea67c83",
+      "description": "Original user-provided MP4; unmodified bytes."
+    }
+  ]
+}

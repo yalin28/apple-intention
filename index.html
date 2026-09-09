@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d7d3d6">
+  <meta name="description" content="An exploration of intention, recreated in type, points and lines. Scroll to move through the story.">
+  <title>Intention — Designed by Apple</title>
+  <style>
+    :root { color-scheme: light; --paper: #d7d3d6; --ink: #1f1a1e; }
+    * { box-sizing: border-box; }
+    html { background: var(--paper); }
+    body { margin: 0; color: var(--ink); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+    .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+    #stage { position: relative; width: 100%; height: 100svh; overflow: hidden; overflow: clip; isolation: isolate; background: radial-gradient(ellipse at center, #ddd9dc, #d0cbcf); }
+    #field, #geometry, #words { position: absolute; pointer-events: none; }
+    #field { inset: 0; width: 100%; height: 100%; }
+    #geometry { left: 50%; top: 50%; width: 100%; height: 100%; transform: translate(-50%, -50%); overflow: visible; }
+    #words { inset: 0; }
+    .caption { position: absolute; left: 50%; top: 50%; margin: 0; width: max-content; max-width: calc(100vw - 40px); font-size: clamp(16px, 2.395833vw, 46px); font-weight: 400; line-height: 1.25; letter-spacing: -.025em; text-align: center; text-wrap: balance; transform: translate(-50%, -50%); }
+    .caption > span { display: inline-block; }
+    .animated .caption { visibility: hidden; }
+    #transcript { max-width: 42rem; margin: 0 auto; padding: 4rem 1.5rem 6rem; font-size: 1.125rem; line-height: 1.65; }
+    #transcript h1 { font-size: 1.75rem; font-weight: 400; letter-spacing: -.025em; }
+    #transcript p { margin: 2rem 0; }
+    .animated #transcript { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    #failure { max-width: 42rem; margin: 2rem auto 0; padding: 0 1.5rem; line-height: 1.5; }
+    #failure[hidden] { display: none; }
+    .static #stage { display: none; }
+    ::selection { background: var(--ink); color: var(--paper); }
+    @media (prefers-reduced-motion: reduce), (forced-colors: active) {
+      #stage { display: none; }
+      .animated #transcript { position: static; width: auto; height: auto; padding: 4rem 1.5rem 6rem; margin: 0 auto; overflow: visible; clip-path: none; white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="stage" aria-hidden="true">
+      <canvas id="field"></canvas>
+      <svg id="geometry" viewBox="-960 -540 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div id="words"><p class="caption" id="first-line">if everyone</p></div>
+    </div>
+    <p id="failure" role="status" hidden></p>
+    <article id="transcript" aria-label="The complete film text">
+      <h1>Intention</h1>
+      <p>if everyone<br>is busy making everything<br>how can anyone perfect anything?</p>
+      <p>we start to confuse convenience<br>with joy<br>abundance with choice.</p>
+      <p>designing something requires<br>focus</p>
+      <p>the first thing we ask is<br>what do we want people to feel?</p>
+      <p>delight<br>surprise<br>love<br>connection</p>
+      <p>then we begin to craft around our intention</p>
+      <p>it takes time.</p>
+      <p>there are a thousand no’s<br>for every yes.</p>
+      <p>we simplify<br>we perfect<br>we start over</p>
+      <p>until every thing we touch<br>enhances each life<br>it touches.</p>
+      <p>only then do we sign our work.</p>
+      <p>Designed by Apple in California</p>
+    </article>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" defer></script>
+  <script>
+  (() => {
+    'use strict';
+
+    // Source seconds describe the choreography; timeline units describe scroll distance.
+    // Each knot is [fraction of this scene's scroll range, source second].
+    const SCENES = [
+      { id: 'S01', label: 'opening', length: .4, knots: [[0, 1.5], [1, 2]] },
+      { id: 'S02', label: 'everything', length: 3, knots: [[0, 2], [.18, 4.5], [.31, 5.1], [.43, 7.9], [.61, 9.8], [.75, 13.6], [.94, 14.4], [1, 15]] },
+      { id: 'S03', label: 'convenience', length: 1.4, knots: [[0, 15], [.32, 17.2], [.85, 19.2], [1, 20]] },
+      { id: 'S04', label: 'joy', length: 1, knots: [[0, 20], [.2, 20.4], [.7, 21.8], [1, 23]] },
+      { id: 'S05', label: 'abundance', length: 1.5, knots: [[0, 23], [.35, 24.9], [.65, 25.2], [1, 27]] },
+      { id: 'S06', label: 'focus', length: 2, knots: [[0, 27], [.18, 28.6], [.53, 30], [.67, 31], [.94, 32.3], [1, 33]] },
+      { id: 'S07', label: 'feel-question', length: 2, knots: [[0, 33], [.3, 34.6], [.44, 36.4], [.69, 36.8], [.83, 38.5], [1, 39]] },
+      { id: 'S08', label: 'delight-surprise', length: 2, knots: [[0, 39], [.26, 40.6], [.49, 41.3], [.56, 41.5], [.91, 42.8], [1, 43]] },
+      { id: 'S09', label: 'love-connection', length: 1.8, knots: [[0, 43], [.31, 44], [.45, 44.8], [.78, 46], [1, 47.5]] },
+      { id: 'S10', label: 'intention', length: 1.6, knots: [[0, 47.5], [.25, 49.2], [.5, 49.7], [.76, 51.5], [1, 53]] },
+      { id: 'S11', label: 'time', length: 1.2, knots: [[0, 53], [.2, 53.8], [.65, 55], [1, 57]] },
+      { id: 'S12', label: 'thousand-nos', length: 2.4, knots: [[0, 57], [.25, 59], [.55, 60.5], [1, 64]] },
+      { id: 'S13', label: 'one-yes', length: 1.4, knots: [[0, 64], [.65, 66], [1, 67]] },
+      { id: 'S14', label: 'simplify', length: 1.2, knots: [[0, 67], [.6, 68.3], [1, 69.3]] },
+      { id: 'S15', label: 'perfect', length: 1.1, knots: [[0, 69.3], [.65, 70.3], [1, 71]] },
+      { id: 'S16', label: 'start-over', length: 1, knots: [[0, 71], [.5, 71.6], [1, 74]] },
+      { id: 'S17', label: 'touch', length: 1.4, knots: [[0, 74], [.28, 75], [.56, 75.4], [1, 77.5]] },
+      { id: 'S18', label: 'enhance-life', length: 1.8, knots: [[0, 77.5], [.14, 78.1], [.4, 79.4], [.52, 80], [.65, 80.6], [.88, 81.5], [1, 82.5]] },
+      { id: 'S19', label: 'sign-work', length: 1.6, knots: [[0, 82.5], [.26, 84.4], [.84, 86.4], [1, 87.5]] },
+      { id: 'S20', label: 'signature', length: 1.2, knots: [[0, 87.5], [.3, 88.5], [1, 90.5]] }
+    ];
+    const TOTAL = SCENES.reduce((sum, scene) => sum + scene.length, 0);
+    const PAPER = '#d7d3d6';
+    const INK = '#1f1a1e';
+    const TAU = Math.PI * 2;
+    const PERFECT_KEYS = [[69.15, 170], [70.25, 175], [70.5, 245], [70.75, 440], [71, 1040], [71.3, 1110]];
+    const LIFE_KEYS = [
+      [77.5, 42], [77.75, 230], [78, 425], [78.5, 465], [79.3, 465],
+      [79.5, 400], [80, 25], [80.5, 140], [81, 175], [81.5, 200],
+      [81.75, 430], [82, 1010], [82.5, 1110]
+    ];
+    const FOREGROUND = [[-840, -230, 88], [-760, 350, 112], [760, 220, 75], [610, -430, 62], [-20, -510, 50], [880, -60, 36]];
+    const polygonScratch = new Float64Array(2);
+    const clamp = value => Math.min(1, Math.max(0, value));
+    const range = (time, start, end) => clamp((time - start) / (end - start));
+    const mix = (a, b, p) => a + (b - a) * p;
+    const smooth = p => { p = clamp(p); return p * p * (3 - 2 * p); };
+    const ease = (time, start, end) => smooth(range(time, start, end));
+    const envelope = (t, start, fadeIn, fadeOut, end) => ease(t, start, fadeIn) * (1 - ease(t, fadeOut, end));
+    const stage = document.getElementById('stage');
+    const canvas = document.getElementById('field');
+    const svg = document.getElementById('geometry');
+    const words = document.getElementById('words');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce), (forced-colors: active)');
+    const film = { time: 1.5 };
+    let view = { width: 1920, height: 1080, scale: 1, dpr: 1, halfWidth: 960, halfHeight: 540, cover: 1110 };
+    let master = null;
+    let trigger = null;
+    let lenis = null;
+    let ticker = null;
+    let running = false;
+    let ready = false;
+    let resizeTimer = 0;
+    let lastTheme = '';
+    let lastRender = NaN;
+
+    function randomGenerator(seed) {
+      return () => {
+        seed |= 0;
+        seed = seed + 0x6D2B79F5 | 0;
+        let n = Math.imul(seed ^ seed >>> 15, 1 | seed);
+        n = n + Math.imul(n ^ n >>> 7, 61 | n) ^ n;
+        return ((n ^ n >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    const random = randomGenerator(20130610);
+    const particles = Array.from({ length: 460 }, (_, index) => {
+      const angle = random() * TAU;
+      const radius = Math.sqrt(random());
+      return {
+        angle, radius, x: Math.cos(angle) * radius, y: Math.sin(angle) * radius,
+        depth: random(), phase: random() * TAU, delay: random() * .6,
+        size: index % 41 === 0 ? 28 + random() * 55 : 1.1 + Math.pow(random(), 3) * 13,
+        alpha: .25 + random() * .7,
+        vx: (random() - .5) * 880, vy: (random() - .5) * 560
+      };
+    });
+
+    // Hand-placed hero circles reproduce the small pile, rather than a live simulation.
+    const pile = [
+      [-234,-63,17],[-200,-58,16],[-205,-105,19],[-178,-82,24],[-98,-105,51],
+      [-158,-149,12],[-137,-178,15],[-112,-157,11],[-70,-165,15],[-40,-150,12],
+      [-28,-185,23],[14,-179,18],[3,-125,26],[53,-108,31],[90,-63,31],
+      [105,-124,14],[137,-97,24],[169,-62,24],[212,-70,24],[244,-55,10],
+      [-152,-59,10],[-167,-52,7],[-45,-71,25],[-7,-68,22],[34,-62,11],
+      [12,-103,10],[62,-159,10],[87,-143,8],[51,-196,8],[49,-220,5],
+      [-57,-212,6],[-17,-228,5],[12,-210,14],[91,-179,4],[132,-147,6],
+      [143,-54,6],[129,-58,6],[-19,-41,4],[-188,-139,6],[232,-98,4]
+    ];
+    const orbit = [
+      [-172,-143,10],[-42,-230,8],[150,-187,7],[224,-20,11],[160,181,14],
+      [-12,237,16],[-177,174,10],[-234,15,19],[-127,-219,6]
+    ];
+
+    // Cached soft sprites avoid canvas blur/filter work in the scroll loop.
+    function softSprite(color) {
+      const sprite = document.createElement('canvas');
+      sprite.width = sprite.height = 128;
+      const c = sprite.getContext('2d');
+      const gradient = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+      gradient.addColorStop(0, color);
+      gradient.addColorStop(.58, color);
+      gradient.addColorStop(1, color === INK ? 'rgba(31,26,30,0)' : 'rgba(215,211,214,0)');
+      c.fillStyle = gradient;
+      c.fillRect(0, 0, 128, 128);
+      return sprite;
+    }
+    let darkSprite;
+    let lightSprite;
+    let textPoints = [];
+    function sampleFeel() {
+      const sample = document.createElement('canvas');
+      sample.width = 720; sample.height = 280;
+      const c = sample.getContext('2d', { willReadFrequently: true });
+      c.font = '240px "Helvetica Neue", Helvetica, Arial, sans-serif';
+      c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillText('feel?', 360, 140);
+      const pixels = c.getImageData(0, 0, 720, 280).data;
+      const result = [];
+      for (let y = 20; y < 260; y += 7) {
+        for (let x = 20; x < 700; x += 7) {
+          if (pixels[(y * 720 + x) * 4 + 3] > 100) result.push([x - 360, y - 140]);
+        }
+      }
+      return result;
+    }
+    function dot(x, y, radius, alpha = 1, color = INK, soft = false) {
+      if (alpha <= .001 || radius <= .01) return;
+      ctx.globalAlpha = Math.min(1, alpha);
+      if (soft) {
+        const size = radius * 1.4;
+        ctx.drawImage(color === INK ? darkSprite : lightSprite, x - size, y - size, size * 2, size * 2);
+      } else {
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, radius, 0, TAU); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function line(x1, y1, x2, y2, alpha = .3, width = 1, color = INK) {
+      if (alpha <= .001) return;
+      ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    function ring(x, y, radius, alpha = 1, width = 2, color = INK) {
+      if (radius <= 0 || alpha <= .001) return;
+      ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width;
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, TAU); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+
+    // SVG handles the opening's fine line work at every display density.
+    const NS = 'http://www.w3.org/2000/svg';
+    function svgElement(tag, attributes, parent) {
+      const node = document.createElementNS(NS, tag);
+      for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+      parent.appendChild(node);
+      return node;
+    }
+    function polygonPoint(sides, radius, phase, rotation) {
+      const position = ((phase % 1 + 1) % 1) * sides;
+      const corner = Math.floor(position);
+      const amount = position - corner;
+      const a = rotation + corner * TAU / sides;
+      const b = a + TAU / sides;
+      polygonScratch[0] = mix(Math.cos(a), Math.cos(b), amount) * radius;
+      polygonScratch[1] = mix(Math.sin(a), Math.sin(b), amount) * radius;
+      return polygonScratch;
+    }
+    const opening = [];
+    function buildOpening() {
+      const specs = [
+        [4, 424, Math.PI * 1.25, 3.3], [8, 502, Math.PI * 1.125, 4.9],
+        [4, 473, Math.PI, 6.1], [6, 480, Math.PI, 7.35],
+        [96, 510, Math.PI, 8.5], [4, 454, Math.PI * 1.25, 9.5],
+        [8, 540, Math.PI * 1.125, 10.4], [6, 548, Math.PI, 11.1]
+      ];
+      for (const [sides, radius, angle, start] of specs) {
+        const group = svgElement('g', { opacity: 0 }, svg);
+        const paths = [], nodes = [];
+        for (let j = 0; j < 4; j++) {
+          let d = '';
+          for (let k = 0; k <= 32; k++) {
+            const [x, y] = polygonPoint(sides, radius, (j + k / 32) / 4, angle);
+            d += `${k ? 'L' : 'M'}${x.toFixed(3)},${y.toFixed(3)} `;
+          }
+          paths.push(svgElement('path', { d, stroke: INK, 'stroke-width': 1.1, 'stroke-opacity': .38, pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, group));
+          nodes.push(svgElement('circle', { r: 5.5, fill: INK, opacity: 0 }, group));
+        }
+        opening.push({ group, paths, nodes, sides, radius, angle, start });
+      }
+    }
+    function drawOpening(t) {
+      const visible = t >= 2.6 && t <= 15.6;
+      svg.style.visibility = visible ? 'visible' : 'hidden';
+      if (!visible) return;
+      for (let i = 0; i < opening.length; i++) {
+        const shape = opening[i];
+        const progress = range(t, shape.start, shape.start + 1.45);
+        const age = Math.max(0, t - shape.start - 1.6);
+        const expansion = 1 + age * .032 + ease(t, 12.7, 15.6) * (.18 + i * .016);
+        const alpha = envelope(t, shape.start - .65, shape.start - .2, 11.8 + i * .15, 13.3 + i * .25);
+        shape.group.setAttribute('opacity', alpha);
+        shape.group.setAttribute('transform', `scale(${expansion})`);
+        for (let j = 0; j < 4; j++) {
+          shape.paths[j].setAttribute('stroke-dashoffset', 1 - progress);
+          const walk = progress / 4 + age * .018;
+          const [x, y] = polygonPoint(shape.sides, shape.radius, j / 4 + walk, shape.angle);
+          shape.nodes[j].setAttribute('cx', x);
+          shape.nodes[j].setAttribute('cy', y);
+          shape.nodes[j].setAttribute('opacity', 1);
+        }
+      }
+    }
+
+    function drawConvenience(t) {
+      if (t < 14.8 || t >= 27) return;
+      if (t < 23) {
+        const arrival = ease(t, 15, 17.2);
+        const joy = ease(t, 19.6, 20.7);
+        const fall = ease(t, 21.7, 23);
+        for (let i = 0; i < orbit.length; i++) {
+          const [ox, oy, size] = orbit[i];
+          const a = i / orbit.length * TAU;
+          const move = Math.sin((t - 17) * .7 + i) * 22 * envelope(t, 16, 17, 21, 23);
+          const x = mix(Math.cos(a) * 465, ox, arrival) + move;
+          const y = mix(Math.sin(a) * 430, oy, arrival) + Math.cos(i + t) * 12 * arrival;
+          const radius = mix(6, size, arrival) * mix(1, i % 3 === 0 ? 2.8 : .8, joy);
+          const target = pile[i];
+          dot(mix(x, target[0], fall), mix(y, target[1], fall), mix(radius, target[2], fall), ease(t, 14.8, 15.3));
+        }
+      }
+      if (t >= 22.3) {
+        const tilt = ease(t, 25.1, 26.6);
+        ctx.save();
+        ctx.translate(-tilt * 12, -tilt * 150);
+        ctx.rotate(tilt * .58);
+        for (let i = 0; i < pile.length; i++) {
+          const [x, y, r] = pile[i];
+          const entry = ease(t, 22.3 + (i % 7) * .075, 23.35 + (i % 5) * .13);
+          const drop = ease(t, 25.25 + (1 - (x + 260) / 520) * .55, 26.8);
+          const px = x + drop * (100 + i % 4 * 20);
+          const py = y - (1 - entry) * (250 + i % 5 * 90) + drop * drop * (1100 + i * 9);
+          const alpha = i < orbit.length ? ease(t, 22.9, 23) : entry;
+          dot(px, py, r, alpha);
+        }
+        ctx.restore();
+      }
+    }
+
+    function drawFocus(t) {
+      if (t < 26.6 || t > 33) return;
+      const alpha = envelope(t, 26.6, 27.25, 29.8, 32.6);
+      const flatten = ease(t, 27, 28.3);
+      for (let i = 0; i < 100; i++) {
+        const p = particles[i];
+        const depth = .35 + p.depth;
+        const x = p.x * 1400 + Math.sin(p.phase + t * .17) * 90;
+        const y = p.y * mix(650, 230, flatten) * depth;
+        const scale = mix(1, 1.4, ease(t, 29, 32));
+        dot(x * scale, y * scale, p.size * depth, alpha * p.alpha * (p.depth > .63 ? .22 : .6), PAPER, p.depth > .63);
+      }
+      const focus = envelope(t, 30.5, 30.95, 32.1, 32.75);
+      dot(0, 0, 64 * mix(.7, 1, ease(t, 30.5, 30.9)), focus, PAPER);
+    }
+
+    function drawFeel(t) {
+      if (t < 38.78 || t >= 43) return;
+      if (t < 41.4) {
+        const scatter = ease(t, 38.8, 39) * mix(.42, 1, ease(t, 39, 40.9));
+        const fade = 1 - ease(t, 39.6, 41.35);
+        const alpha = ease(t, 38.78, 38.94);
+        for (let i = 0; i < textPoints.length; i++) {
+          const point = textPoints[i];
+          const p = particles[i % particles.length];
+          const x = point[0] + p.vx * scatter;
+          const y = point[1] + p.vy * scatter - scatter * 60;
+          dot(x, y, mix(3.2, 1.2, scatter) * (.6 + p.depth), alpha * fade * p.alpha, PAPER);
+        }
+        for (let i = 0; i < 9; i++) {
+          const p = particles[i * 17];
+          dot(p.x * mix(250, 1400, scatter), p.y * mix(100, 800, scatter), Math.min(p.size, 16) * mix(.4, 2.5, ease(t, 39.25, 40.5)), alpha * fade * .65, PAPER, true);
+        }
+      } else {
+        const spread = 1 - ease(t, 41.5, 42.9);
+        for (let i = 0; i < 72; i++) {
+          const p = particles[i];
+          const r = 20 + p.radius * mix(0, 106, spread);
+          dot(Math.cos(p.angle) * r, -110 + Math.sin(p.angle) * r, 1.3 + p.depth * 2.2, spread * p.alpha);
+        }
+        dot(0, -110, mix(7, 35, ease(t, 42.8, 43)));
+      }
+    }
+
+    function drawConnection(t) {
+      if (t < 43 || t > 47.5) return;
+      if (t < 44.3) {
+        const join = ease(t, 44, 44.3);
+        const radius = 39;
+        const offset = mix(25, 17, join);
+        dot(-offset, -110, radius); dot(offset, -110, radius);
+        // Clip one circle to the other to restore the paper-colored intersection.
+        ctx.save();
+        ctx.beginPath(); ctx.arc(-offset, -110, radius, 0, TAU); ctx.clip();
+        dot(offset, -110, radius, 1 - join, PAPER);
+        ctx.restore();
+      } else if (t < 46.85) {
+        const expand = ease(t, 44.3, 44.65);
+        const contract = ease(t, 46.15, 46.85);
+        const distance = mix(36, 280, expand) * (1 - contract);
+        const angle = mix(.1, 1.05, ease(t, 44.3, 46.25)) + Math.sin(contract * TAU) * .45;
+        const cy = mix(-110, 0, contract);
+        const dx = Math.cos(angle) * distance / 2;
+        const dy = Math.sin(angle) * distance / 2;
+        line(-dx, cy - dy, dx, cy + dy, .65, 1.5);
+        dot(-dx, cy - dy, mix(39, 24, expand));
+        dot(dx, cy + dy, mix(39, 26, expand));
+      } else {
+        const hollow = ease(t, 46.85, 47.04);
+        dot(0, 0, 35, (1 - hollow));
+        ring(0, 0, 35, hollow * (1 - ease(t, 47.12, 47.45)), 3);
+      }
+    }
+
+    function drawChoices(t) {
+      if (t < 54.5 || t > 67) return;
+      const birth = ease(t, 54.5, 58.2);
+      const fan = ease(t, 61.1, 64);
+      const lift = ease(t, 64, 66);
+      const centerY = mix(120, 175, fan) - lift * 175;
+      const collapse = ease(t, 64.9, 66.1);
+      const edges = ease(t, 60.4, 62.9);
+      if (t < 66.1) {
+        for (let i = 0; i < 235; i++) {
+          const p = particles[i];
+          const spread = birth * (1 - collapse);
+          const density = Math.pow(p.radius, 3);
+          let x = p.x * density * (1100 + p.depth * 420) * spread;
+          let y = p.y * density * (550 + p.depth * 150) * birth - birth * 180;
+          y = mix(y, centerY - 40 - Math.pow(p.radius, 3) * 1000, fan);
+          const foreground = i % 41 === 0;
+          if (foreground) {
+            const anchor = FOREGROUND[Math.floor(i / 41)];
+            x = anchor[0] * spread;
+            y = mix(anchor[1], -view.halfHeight - 200, fan) * birth;
+          }
+          y -= lift * 750;
+          const angle = t * .065 + p.phase;
+          x += Math.sin(angle) * 18 * spread;
+          const opacity = birth * (1 - ease(t, 65.1 + p.delay, 66.1)) * p.alpha * (foreground ? .3 * (1 - ease(t, 62, 64)) : 1);
+          const growth = ease(t, 54.5 + p.delay * 2, 58.8);
+          const radius = growth * (foreground ? FOREGROUND[Math.floor(i / 41)][2] : p.size * (.3 + density * .8));
+          const lineProgress = ease(edges, p.delay * .8, .8 + p.delay * .3);
+          line(0, centerY, x * lineProgress, mix(centerY, y, lineProgress), opacity * .20 * edges, .9);
+          dot(x, y, radius, opacity, INK, radius > 18);
+        }
+      }
+      const core = ease(t, 60.5, 63);
+      if (t < 66.15) {
+        dot(0, centerY, mix(7, 22, core), core);
+        line(0, -view.halfHeight - 10, 0, centerY, ease(t, 65.7, 66), 1.4);
+      } else {
+        const pull = ease(t, 66.15, 66.75);
+        ctx.strokeStyle = INK; ctx.lineWidth = 1.4; ctx.globalAlpha = 1 - pull;
+        ctx.beginPath(); ctx.moveTo(0, -view.halfHeight - 20);
+        ctx.bezierCurveTo(-85 * pull, -420, 145 * pull, -180, 0, -pull * 240);
+        ctx.stroke(); ctx.globalAlpha = 1;
+        dot(0, 0, 22);
+      }
+    }
+
+    function drawSimplify(t) {
+      if (t < 67 || t >= 69.15) return;
+      const unfold = ease(t, 67, 67.45);
+      const turn = ease(t, 68.15, 69.15);
+      const half = mix(28, 175, unfold);
+      ctx.save(); ctx.rotate(turn * 1.46);
+      line(-half, 0, half, 0, .65, mix(12, 1.4, unfold));
+      const r = 22 * (1 - unfold);
+      dot(-half, 0, r); dot(half, 0, r);
+      ctx.restore();
+    }
+
+    function drawPerfect(t) {
+      if (t < 69.15 || t >= 71.3) return;
+      const form = ease(t, 69.15, 69.65);
+      const radius = keyframe(t, PERFECT_KEYS);
+      ctx.save();
+      ctx.rotate(mix(-.2, 0, form));
+      // Two thin semicircles open around the line, then close their central seam.
+      const halfWidth = mix(.015, 1, ease(t, 69.15, 69.25));
+      ctx.scale(halfWidth, 1);
+      dot(0, 0, radius);
+      if (form < 1) line(0, -radius - 1, 0, radius + 1, 1 - form, 6 / halfWidth, PAPER);
+      ctx.restore();
+    }
+
+    function drawStartOver(t) {
+      if (t < 71.5 || t > 74) return;
+      const spread = ease(t, 71.5, 73.8);
+      const alpha = envelope(t, 71.5, 72, 72.5, 74);
+      for (let i = 0; i < 95; i++) {
+        const p = particles[i];
+        dot(p.x * mix(75, 310, spread), p.y * mix(8, 80, spread), 1 + p.depth * 1.7, alpha * p.alpha * .45, PAPER);
+      }
+    }
+
+    function drawTouch(t) {
+      if (t < 75.25 || t >= 77.5) return;
+      const travel = ease(t, 75.25, 76.9);
+      const x = mix(270, -260, travel);
+      ring(x, 0, 33, envelope(t, 75.25, 75.5, 76.45, 76.9) * .7, 2, PAPER);
+      const pulse = envelope(t, 75.65, 75.95, 76.2, 76.7);
+      dot(350 - travel * 300, 0, 25, pulse, PAPER);
+      dot(350 - travel * 300, 0, 5, pulse, INK);
+      ring(mix(180, 0, ease(t, 76.2, 76.95)), 0, mix(33, 1, ease(t, 76.7, 77)), envelope(t, 76.1, 76.4, 76.8, 77.05), 2, PAPER);
+      dot(0, 0, 42 * ease(t, 77.25, 77.5), ease(t, 77.25, 77.5), PAPER);
+    }
+
+    function keyframe(t, points) {
+      for (let i = 1; i < points.length; i++) {
+        if (t <= points[i][0]) {
+          const a = points[i - 1], b = points[i];
+          return mix(a[1], b[1], range(t, a[0], b[0]));
+        }
+      }
+      return points[points.length - 1][1];
+    }
+    function lifeRadius(t) {
+      return keyframe(t, LIFE_KEYS);
+    }
+    function drawLife(t) {
+      if (t < 77.5 || t >= 82.5) return;
+      const radius = lifeRadius(t);
+      const gridAlpha = envelope(t, 77.6, 78, 78.45, 79.05);
+      if (gridAlpha > .001) {
+        const size = 680;
+        for (let y = -size; y <= size; y += 40) {
+          for (let x = -size; x <= size; x += 40) {
+            const distance = Math.hypot(x, y);
+            if (distance > radius && distance < size) {
+              dot(x, y, 1.5, gridAlpha * (1 - distance / size) * .7, PAPER);
+            }
+          }
+        }
+      }
+      dot(0, 0, radius, 1, PAPER);
+    }
+
+    // Timing lives next to the original words. Every letter can be evaluated directly.
+    const CUES = [
+      { text: 'if everyone', start: 1, full: 1.8, out: 5.2, end: 5.95 },
+      { text: 'is busy making everything', start: 6.5, full: 7.9, out: 10, end: 10.7 },
+      { text: 'how can anyone perfect anything?', start: 11.1, full: 13.55, out: 14.45, end: 15 },
+      { text: 'we start to confuse convenience', start: 16, full: 17.15, out: 19.55, end: 20 },
+      { text: 'with joy', start: 20, full: 20.35, out: 22.1, end: 22.7, type: 'joy' },
+      { text: 'abundance with choice.', start: 22.9, full: 24.85, out: 26.55, end: 26.85, type: 'abundance' },
+      { text: 'designing something requires', start: 27.65, full: 28.65, out: 30, end: 30.65 },
+      { text: 'focus', start: 30.65, full: 30.95, out: 32.1, end: 32.75, type: 'focus' },
+      { text: 'the first thing we ask is', start: 32.9, full: 33.5, out: 34.5, end: 35 },
+      { text: 'what do we want people to feel?', start: 35, full: 36.45, out: 36.9, end: 38.82, type: 'question' },
+      { text: 'feel?', start: 37.85, full: 38.1, out: 38.78, end: 38.98, type: 'feel' },
+      { text: 'delight', start: 40.15, full: 40.65, out: 41.33, end: 41.4, y: 125 },
+      { text: 'surprise', start: 41.4, full: 41.5, out: 42.87, end: 43, y: 125 },
+      { text: 'love', start: 43, full: 43.25, out: 44.05, end: 44.3, y: 220 },
+      { text: 'connection', start: 44.3, full: 44.8, out: 46, end: 46.35, y: 125 },
+      { text: 'then we begin to craft around our intention', start: 47.4, full: 49.2, out: 49.8, end: 53, type: 'intention' },
+      { text: 'it takes time.', start: 53.25, full: 53.8, out: 56.4, end: 57, type: 'time' },
+      { text: 'there are a thousand no’s', start: 58.45, full: 58.95, out: 60.7, end: 61.3, y: 280 },
+      { text: 'for every yes.', start: 63.65, full: 64.3, out: 66.15, end: 66.65, type: 'yes' },
+      { text: 'we simplify', start: 66.85, full: 67.35, out: 68.1, end: 68.65, y: 120 },
+      { text: 'we perfect', start: 69.2, full: 69.45, out: 70.85, end: 71.05, type: 'perfect' },
+      { text: 'we start over', start: 70.85, full: 71.1, out: 71.65, end: 72.4, type: 'restart' },
+      { text: 'until every thing we touch', start: 73.65, full: 74.8, out: 76.2, end: 76.5, type: 'touch' },
+      { text: 'enhances each life', start: 77.75, full: 77.95, out: 79.6, end: 79.93, type: 'life' },
+      { text: 'it touches.', start: 80.2, full: 80.6, out: 82.15, end: 82.5, type: 'life' },
+      { text: 'only then do we sign our work.', start: 82.85, full: 84.4, out: 86.4, end: 87.35 },
+      { text: 'Designed by Apple in California', start: 87.75, full: 88.5, out: 100, end: 101, type: 'signature' }
+    ];
+    function buildWords() {
+      words.replaceChildren();
+      for (const cue of CUES) {
+        cue.node = document.createElement('p');
+        cue.node.className = 'caption';
+        cue.tokens = [];
+        // Characters for selective erasure; ordinary words remain intact for wrapping.
+        cue.characters = ['intention', 'question', 'restart'].includes(cue.type);
+        const tokens = cue.characters ? Array.from(cue.text) : cue.text.split(' ');
+        for (let i = 0; i < tokens.length; i++) {
+          const span = document.createElement('span');
+          span.textContent = tokens[i] === ' ' ? '\u00a0' : tokens[i];
+          cue.node.appendChild(span);
+          if (!cue.characters && i < tokens.length - 1) cue.node.appendChild(document.createTextNode(' '));
+          cue.tokens.push(span);
+        }
+        cue.node.style.visibility = 'hidden';
+        cue.visible = false;
+        words.appendChild(cue.node);
+      }
+    }
+    function drawWords(t) {
+      const dark = (t >= 26.9 && t < 41.4) || (t >= 71.3 && t < 82.5);
+      for (const cue of CUES) {
+        const active = t >= cue.start && t <= cue.end;
+        if (!active) {
+          if (cue.visible) cue.node.style.visibility = 'hidden';
+          cue.visible = false;
+          continue;
+        }
+        let x = 0, y = cue.y || 0, rotation = 0, scale = 1;
+        let alpha = 1 - ease(t, cue.out, cue.end);
+        let color = dark ? PAPER : INK;
+        if (cue.type === 'abundance') {
+          const tilt = ease(t, 25.1, 26.6);
+          rotation = tilt * .58;
+          x = -tilt * 12; y = -tilt * 150;
+        }
+        if (cue.type === 'joy') y = -ease(t, 21.6, 22.6) * 180;
+        if (cue.type === 'focus') { color = INK; scale = .83; }
+        if (cue.type === 'question') {
+          alpha = 1;
+          x = -ease(t, 36.9, 37.9) * cue.feelOffset;
+        }
+        if (cue.type === 'feel') scale = mix(1, 5.22, ease(t, 38.55, 38.8));
+        if (cue.type === 'intention') alpha = 1;
+        if (cue.type === 'time') x = mix(300, -620, ease(t, 54.3, 56.8));
+        if (cue.type === 'yes') y = mix(380, 120, ease(t, 64, 64.7));
+        if (cue.type === 'perfect' || cue.type === 'restart') color = PAPER;
+        if (cue.type === 'restart') alpha = 1;
+        if (cue.type === 'touch') x = -ease(t, 75.15, 76.5) * (view.halfWidth + 700);
+        if (cue.type === 'life') color = INK;
+        if (cue.type === 'signature') scale = .95;
+        cue.node.style.visibility = 'visible';
+        cue.node.style.opacity = alpha;
+        cue.node.style.color = color;
+        cue.node.style.transform = `translate(-50%, -50%) translate(${x * view.scale}px, ${y * view.scale}px) rotate(${rotation}rad) scale(${scale})`;
+        cue.visible = true;
+        for (let i = 0; i < cue.tokens.length; i++) {
+          const span = cue.tokens[i];
+          const fraction = cue.tokens.length === 1 ? 0 : i / (cue.tokens.length - 1);
+          const revealAt = mix(cue.start, Math.max(cue.start, cue.full - .2), fraction);
+          let opacity = ease(t, revealAt, revealAt + .2);
+          if (cue.type === 'question') {
+            const prefixLength = cue.text.length - 5;
+            if (i < prefixLength) opacity *= 1 - ease(t, 36.9 + i * .025, 37.2 + i * .025);
+            else opacity *= 1 - ease(t, 37.85, 38.1);
+          }
+          if (cue.type === 'intention') {
+            const prefixLength = cue.text.length - 9;
+            if (i < prefixLength) opacity *= 1 - ease(t, 49.8 + i * .035, 50.15 + i * .035);
+            else opacity *= 1 - ease(t, 51.65 + (cue.text.length - 1 - i) * .115, 51.9 + (cue.text.length - 1 - i) * .115);
+          }
+          if (cue.type === 'restart') opacity *= 1 - ease(t, 71.55 + (cue.tokens.length - 1 - i) * .038, 71.8 + (cue.tokens.length - 1 - i) * .038);
+          span.style.opacity = opacity;
+        }
+      }
+    }
+
+    function drawBackground(t) {
+      const dark = (t >= 27 && t < 41.4) || (t >= 71.3 && t < 82.5);
+      const theme = dark ? 'dark' : 'light';
+      if (theme !== lastTheme) {
+        stage.style.background = dark ? INK : 'radial-gradient(ellipse at center, #ddd9dc, #d0cbcf)';
+        document.documentElement.style.backgroundColor = dark ? INK : PAPER;
+        lastTheme = theme;
+      }
+      // A tilted plane enters from the lower-right, covering even portrait viewports.
+      if (t >= 26.55 && t < 27) {
+        const p = range(t, 26.55, 27);
+        const extent = view.halfHeight + view.halfWidth * .45 + 10;
+        const intercept = mix(extent, -extent, p);
+        ctx.fillStyle = INK;
+        ctx.beginPath();
+        ctx.moveTo(-view.halfWidth - 2, intercept + view.halfWidth * .45);
+        ctx.lineTo(view.halfWidth + 2, intercept - view.halfWidth * .45);
+        ctx.lineTo(view.halfWidth + 2, view.halfHeight + 2);
+        ctx.lineTo(-view.halfWidth - 2, view.halfHeight + 2);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+    function render(force = false) {
+      const t = film.time;
+      if (!force && t === lastRender) return;
+      lastRender = t;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.setTransform(view.dpr * view.scale, 0, 0, view.dpr * view.scale, view.width * view.dpr / 2, view.height * view.dpr / 2);
+      drawBackground(t);
+      drawOpening(t);
+      drawConvenience(t);
+      drawFocus(t);
+      drawFeel(t);
+      drawConnection(t);
+      drawChoices(t);
+      drawSimplify(t);
+      drawPerfect(t);
+      drawStartOver(t);
+      drawTouch(t);
+      drawLife(t);
+      drawWords(t);
+    }
+
+    function measure() {
+      const width = document.documentElement.clientWidth;
+      const height = stage.clientHeight || window.innerHeight;
+      const scale = Math.min(width / 1920, height / 1080);
+      const pixelBudget = 5200000;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(pixelBudget / (width * height)));
+      view = { width, height, scale, dpr, halfWidth: width / (2 * scale), halfHeight: height / (2 * scale), cover: Math.hypot(width, height) / (2 * scale) + 8 };
+      PERFECT_KEYS[PERFECT_KEYS.length - 1][1] = view.cover;
+      LIFE_KEYS[LIFE_KEYS.length - 1][1] = view.cover;
+      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+      svg.style.width = `${1920 * scale}px`; svg.style.height = `${1080 * scale}px`;
+      // Keep text readable on narrow displays without scaling the geometry out of frame.
+      const fontSize = Math.max(16, 46 * scale);
+      for (const cue of CUES) cue.node.style.fontSize = `${fontSize}px`;
+      const question = CUES.find(cue => cue.type === 'question');
+      const tail = question.tokens.slice(-5);
+      const firstRect = tail[0].getBoundingClientRect();
+      const lastRect = tail[4].getBoundingClientRect();
+      const textRect = question.node.getBoundingClientRect();
+      question.feelOffset = ((firstRect.left + lastRect.right) / 2 - (textRect.left + textRect.right) / 2) / scale;
+      render(true);
+    }
+    function makeTimeline() {
+      const timeline = gsap.timeline({ paused: true, defaults: { ease: 'none' }, onUpdate: render });
+      let position = 0;
+      for (const scene of SCENES) {
+        timeline.addLabel(scene.label, position);
+        for (let i = 1; i < scene.knots.length; i++) {
+          const a = scene.knots[i - 1], b = scene.knots[i];
+          timeline.fromTo(film, { time: a[1] }, {
+            time: b[1], duration: (b[0] - a[0]) * scene.length,
+            immediateRender: false, lazy: false
+          }, position + a[0] * scene.length);
+        }
+        position += scene.length;
+      }
+      timeline.addLabel('end', TOTAL);
+      return timeline;
+    }
+    function start() {
+      if (running || motionQuery.matches || !ready) return;
+      document.body.classList.remove('static');
+      document.body.classList.add('animated');
+      running = true;
+      film.time = 1.5;
+      measure();
+      master = makeTimeline();
+      lenis = new Lenis({ autoRaf: false, smoothWheel: true, lerp: .1, wheelMultiplier: 1, syncTouch: false });
+      lenis.on('scroll', ScrollTrigger.update);
+      ticker = time => lenis.raf(time * 1000);
+      gsap.ticker.add(ticker);
+      gsap.ticker.lagSmoothing(0);
+      trigger = ScrollTrigger.create({
+        id: 'intention', trigger: stage, start: 'top top', end: () => `+=${TOTAL * view.height}`,
+        pin: true, pinSpacing: true, scrub: true, animation: master,
+        invalidateOnRefresh: true, onRefresh: () => render(true)
+      });
+      ScrollTrigger.refresh();
+      lenis.resize();
+      ScrollTrigger.update();
+      render(true);
+    }
+    function stop() {
+      if (ticker) gsap.ticker.remove(ticker);
+      if (lenis) { lenis.off('scroll', ScrollTrigger.update); lenis.destroy(); }
+      if (trigger) trigger.kill(true);
+      if (master) master.kill();
+      master = trigger = lenis = ticker = null;
+      running = false;
+      document.body.classList.remove('animated');
+      document.body.classList.add('static');
+      document.documentElement.style.backgroundColor = PAPER;
+    }
+    function fail() {
+      if (running) stop();
+      document.body.classList.add('static');
+      const failure = document.getElementById('failure');
+      failure.textContent = 'The animation couldn’t load. Please check your connection and reload. The complete text is below.';
+      failure.hidden = false;
+    }
+    function resize() {
+      clearTimeout(resizeTimer);
+      if (!running) return;
+      resizeTimer = setTimeout(() => {
+        if (!running) return;
+        const oldWidth = view.width, oldHeight = view.height;
+        const nextWidth = document.documentElement.clientWidth;
+        const nextHeight = stage.clientHeight || window.innerHeight;
+        // Stable svh avoids rebuilding for browser toolbar movement alone.
+        if (nextWidth === oldWidth && nextHeight === oldHeight && view.dpr === Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(5200000 / (nextWidth * nextHeight)))) return;
+        const progress = trigger.progress;
+        measure();
+        ScrollTrigger.refresh();
+        lenis.resize();
+        lenis.scrollTo(trigger.start + progress * (trigger.end - trigger.start), { immediate: true });
+        master.totalProgress(progress, false);
+        render(true);
+      }, 180);
+    }
+    async function boot() {
+      if (motionQuery.matches) document.body.classList.add('static');
+      if (!ctx || !window.gsap || !window.ScrollTrigger || !window.Lenis) {
+        if (!motionQuery.matches) fail();
+        return;
+      }
+      try {
+        await document.fonts.ready;
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.config({ ignoreMobileResize: true });
+        darkSprite = softSprite(INK); lightSprite = softSprite(PAPER);
+        textPoints = sampleFeel();
+        buildOpening(); buildWords();
+        ready = true;
+        start();
+        motionQuery.addEventListener('change', () => motionQuery.matches ? stop() : start());
+        window.addEventListener('resize', resize, { passive: true });
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden && running) { lenis.resize(); ScrollTrigger.update(); render(true); }
+        });
+        window.addEventListener('pagehide', () => { if (running) stop(); });
+        window.addEventListener('pageshow', event => { if (event.persisted) start(); });
+      } catch (error) {
+        console.error('Unable to initialize Intention.', error);
+        fail();
+      }
+    }
+    window.addEventListener('DOMContentLoaded', boot, { once: true });
+  })();
+  </script>
+</body>
+</html>
